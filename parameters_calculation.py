@@ -23,12 +23,12 @@ def plot_transient(file_path, column_index=1, start_from=0, ylim=None):
     if ylim:
         plt.ylim(ylim)
 
-    plt.title('EEG Signal time domain for small needle electrodes')
+    plt.title('EEG Signal time domain')
     plt.grid(True)
     plt.show()
 
 
-def calculate_parameters(file_path, column_index=1, start_from=0, target_frequency=12.5, target_bandwidth=1):
+def calculate_parameters(file_path, column_index=1, start_from=0, target_frequency=12.5, target_bandwidth=1, noise_range=(5, 20)):
     fs = 250  # Sampling frequency
 
     df = pd.read_csv(file_path, delimiter='\t')
@@ -48,7 +48,7 @@ def calculate_parameters(file_path, column_index=1, start_from=0, target_frequen
     target_peak_index_full = np.argmax(psdx_full[target_freq_indices_full])
     peak_freq_full = freq_full[target_freq_indices_full][target_peak_index_full]
 
-    noise_indices_full = (freq_full >= 5) & (freq_full <= 20) & \
+    noise_indices_full = (freq_full >= noise_range[0]) & (freq_full <= noise_range[1]) & \
                          ~((freq_full >= peak_freq_full - 0.5) & (freq_full <= peak_freq_full + 0.5))
     noise_powers_full = psdx_full[noise_indices_full]
     noise_power_avg_full = np.mean(noise_powers_full)
@@ -95,13 +95,13 @@ def plot_results(freq_full, psdx_full, peak_freq_full, target_peak_power_full, p
     plt.show()
 
 
-def process_files(base_dir, file_names, column_index=1, start_from=2, target_frequency=12.5, target_bandwidth=1, plot_title="Periodogram Using FFT", y_range=(-140, -20)):
+def process_files(base_dir, file_names, column_index=1, start_from=2, target_frequency=12.5, target_bandwidth=1, noise_range=(5, 20), plot_title="Periodogram Using FFT", y_range=(-140, -20)):
     # array to save the results
     results = []
     file_paths = [os.path.join(base_dir, file_name) for file_name in file_names]
 
     for file_path in file_paths:
-        result = calculate_parameters(file_path, column_index, start_from, target_frequency, target_bandwidth)
+        result = calculate_parameters(file_path, column_index, start_from, target_frequency, target_bandwidth, noise_range)
         if result:
             snr, peak_freq, peak_power, noise_power_avg, peak_50Hz_power, SSVEP_to_50Hz_Ratio, freq_full, psdx_full, peak_50Hz_full = result
             
@@ -125,7 +125,7 @@ def process_files(base_dir, file_names, column_index=1, start_from=2, target_fre
 
     # plot
     for file_path in file_paths:
-        result = calculate_parameters(file_path, column_index, start_from, target_frequency, target_bandwidth)
+        result = calculate_parameters(file_path, column_index, start_from, target_frequency, target_bandwidth, noise_range)
         if result:
             snr, peak_freq, peak_power, noise_power_avg, peak_50Hz_power, SSVEP_to_50Hz_Ratio, freq_full, psdx_full, peak_50Hz_full = result
             
