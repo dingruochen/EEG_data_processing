@@ -4,7 +4,7 @@ from numpy.fft import fft
 import matplotlib.pyplot as plt
 import os
 
-def plot_transient(file_path, column_index=1, start_from=0, ylim=None):
+def plot_transient(file_path, column_index=1, start_from=0, ylim=None, title="EEG Signal time domain"):
     fs = 250  # Sampling frequency
 
     df = pd.read_csv(file_path, delimiter='\t')
@@ -23,7 +23,7 @@ def plot_transient(file_path, column_index=1, start_from=0, ylim=None):
     if ylim:
         plt.ylim(ylim)
 
-    plt.title('EEG Signal time domain')
+    plt.title(title)
     plt.grid(True)
     plt.show()
 
