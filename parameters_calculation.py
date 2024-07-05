@@ -116,7 +116,29 @@ def process_files(base_dir, file_names, column_indices=[1], start_from=2, target
         plt.tight_layout()
         plt.show()
 
-        
+def plot_transient(file_path, column_index=1, start_from=0, ylim=None, title="EEG Signal time domain"):
+    fs = 250  # Sampling frequency
+
+    df = pd.read_csv(file_path, delimiter='\t')
+    if df.shape[1] <= column_index:
+        raise ValueError(f"The file {file_path} does not have column index {column_index}.")
+
+    x = df.iloc[start_from:, column_index].dropna()
+
+    samples = range(start_from + 1, start_from + len(x) + 1)
+
+    plt.figure()
+    plt.plot(samples, x)
+    plt.xlabel('Samples')
+    plt.ylabel('EEG Signal')
+
+    if ylim:
+        plt.ylim(ylim)
+
+    plt.title(title)
+    plt.grid(True)
+    plt.show()
+
 '''
 def calculate_parameters(file_path, column_index=1, start_from=0, target_frequency=12.5, target_bandwidth=1, noise_range=(5, 20)):
     fs = 250  # Sampling frequency
