@@ -26,7 +26,10 @@ def plot_transient(file_path, column_index=1, start_from=0, ylim=None, title="EE
     plt.title(title)
     plt.grid(True)
     plt.show()
+
+
     
+
 def calculate_parameters(file_path, column_index=1, start_from=0, target_frequency=12.5, target_bandwidth=1, noise_range=(5, 20)):
     fs = 250  # Sampling frequency
 
