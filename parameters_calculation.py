@@ -6,7 +6,6 @@ import os
 
 def plot_transient(file_path, column_index=1, start_from=0, ylim=None, title="EEG Signal time domain"):
     fs = 250  # Sampling frequency
-
     df = pd.read_csv(file_path, delimiter='\t')
     if df.shape[1] <= column_index:
         raise ValueError(f"The file {file_path} does not have column index {column_index}.")
@@ -27,8 +26,6 @@ def plot_transient(file_path, column_index=1, start_from=0, ylim=None, title="EE
     plt.grid(True)
     plt.show()
 
-
-    
 
 def calculate_parameters(file_path, column_index=1, start_from=0, target_frequency=12.5, target_bandwidth=1, noise_range=(5, 20)):
     fs = 250  # Sampling frequency
