@@ -27,10 +27,10 @@ def plot_transient(file_path, column_index=1, start_from=0, ylim=None, title="EE
     plt.show()
 
 
-def calculate_parameters(file_path, column_index=1, start_from=0, target_frequency=12.5, target_bandwidth=1, noise_range=(5, 20)):
+def calculate_parameters(file_path, column_index=1, start_from=0, target_frequency=12.5, target_bandwidth=1, noise_range=(5, 20),delimiter='\t'):
     fs = 250  # Sampling frequency
 
-    df = pd.read_csv(file_path, delimiter='\t')
+    df = pd.read_csv(file_path, delimiter=delimiter)
     if df.shape[1] <= column_index:
         raise ValueError(f"The file {file_path} does not have column index {column_index}.")
 
@@ -97,14 +97,14 @@ def plot_results(ax, freq_full, psdx_full, peak_freq_full, target_peak_power_ful
     ax.text(0.95, 0.95, textstr, transform=ax.transAxes, fontsize=14,
             verticalalignment='top', horizontalalignment='right', bbox=props)
 
-def process_files(base_dir, file_names, column_indices=[1], start_from=2, target_frequency=12.5, target_bandwidth=1, noise_range=(5, 20), plot_title="Periodogram Using FFT", y_range=(-140, -20)):
+def process_files(base_dir, file_names, column_indices=[1], start_from=2, target_frequency=12.5, target_bandwidth=1, noise_range=(5, 20), plot_title="Periodogram Using FFT", y_range=(-140, -20),delimiter='\t'):
     results = []
     file_paths = [os.path.join(base_dir, file_name) for file_name in file_names]
 
     # Collect results
     for file_path in file_paths:
         for column_index in column_indices:
-            result = calculate_parameters(file_path, column_index, start_from, target_frequency, target_bandwidth, noise_range)
+            result = calculate_parameters(file_path, column_index, start_from, target_frequency, target_bandwidth, noise_range,delimiter)
             if result:
                 snr, peak_freq, peak_power, noise_power_avg, peak_50Hz_power,target_to_50Hz_ratio, freq_full, psdx_full, peak_50Hz_full = result
                 results.append([f"{os.path.basename(file_path)} (CH{column_index})", snr, peak_freq, peak_power, noise_power_avg, peak_50Hz_power, target_to_50Hz_ratio])
@@ -128,7 +128,7 @@ def process_files(base_dir, file_names, column_indices=[1], start_from=2, target
             axes = axes.flatten()
             
         for ax, column_index in zip(axes, column_indices):
-            result = calculate_parameters(file_path, column_index, start_from, target_frequency, target_bandwidth, noise_range)
+            result = calculate_parameters(file_path, column_index, start_from, target_frequency, target_bandwidth, noise_range,delimiter)
             if result:
                 snr, peak_freq, peak_power, noise_power_avg, peak_50Hz_power, target_to_50Hz_ratio, freq_full, psdx_full, peak_50Hz_full = result
                 
